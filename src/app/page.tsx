@@ -181,12 +181,12 @@ export default function Home() {
                 alleen mooi is, maar ook rendeert.
               </p>
             </div>
-          <div className="grid gap-4 md:grid-cols-3">
-            <Card className="border-border/70 bg-background/80">
-              <CardHeader className="space-y-2 pb-3">
-                <CardTitle className="text-sm font-semibold">
-                  Webdesign & merkvertaling
-                </CardTitle>
+            <div className="grid gap-4 md:grid-cols-3">
+              <Card className="border-border/70 bg-background/80">
+                <CardHeader className="space-y-2 pb-3">
+                  <CardTitle className="text-sm font-semibold">
+                    Webdesign & merkvertaling
+                  </CardTitle>
                 <CardDescription className="text-xs">
                   Visuele identiteit doorvertaald naar een heldere, herkenbare
                   online ervaring.
@@ -234,6 +234,7 @@ export default function Home() {
                 </ul>
               </CardContent>
             </Card>
+          </div>
           </div>
         </section>
 
