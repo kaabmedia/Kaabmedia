@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,8 @@ import {
   Mail,
   MapPin,
   Phone,
+  Menu,
+  X,
 } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -135,8 +137,8 @@ const processSteps = [
     icon: Figma,
     duration: "3\u20135 dagen",
     description:
-      "We vertalen de brief naar wireframes en een visueel ontwerp. Je ziet precies hoe je site eruitziet, v\u00F3\u00F3r er code geschreven wordt.",
-    deliverables: ["Wireframes", "Visueel ontwerp", "Stijlgids / kleuren"],
+      "We vertalen de brief naar een visueel ontwerp. Je ziet precies hoe je site eruitziet, v\u00F3\u00F3r er code geschreven wordt.",
+    deliverables: ["Visueel ontwerp", "Stijlgids / kleuren"],
   },
   {
     number: "03",
@@ -251,6 +253,9 @@ export default function Home() {
   const wrapRef = useScrollReveal();
   const timelineLineRef = useRef<HTMLDivElement>(null);
   const processRef = useRef<HTMLDivElement>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const closeMobile = useCallback(() => setMobileOpen(false), []);
 
   useEffect(() => {
     // Hero plays immediately (no scroll)
@@ -285,47 +290,94 @@ export default function Home() {
   return (
     <>
       {/* ─── Header ─── */}
-      <header className="fixed left-0 right-0 top-0 z-50 px-4 pt-4 md:px-6 md:pt-5">
-        <div className="mx-auto flex max-w-7xl items-center justify-between">
-          {/* Logo — buiten de pill */}
+      {/* Mobile: solid white bg + bottom border. Desktop: floating pill. */}
+      <header className="fixed left-0 right-0 top-0 z-50 border-b border-border/40 bg-background md:border-b-0 md:bg-transparent md:px-6 md:pt-5">
+        {/* Mobile bar */}
+        <div className="mx-auto flex h-14 items-center justify-between px-4 md:hidden">
           <Link href="/" className="flex items-center gap-2.5 transition-opacity hover:opacity-80">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-xs font-bold text-primary-foreground">
               K
             </div>
-            <span className="hidden text-[15px] font-semibold tracking-tight sm:inline">
+            <span className="text-[15px] font-semibold tracking-tight">
               Kaabmedia
             </span>
           </Link>
+          <button
+            onClick={() => setMobileOpen((o) => !o)}
+            className="flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:bg-secondary"
+            aria-label="Menu"
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
 
-          {/* Pill nav */}
-          <nav className="flex items-center rounded-full border border-border/40 bg-background/70 px-1.5 py-1.5 shadow-lg shadow-black/[0.03] backdrop-blur-xl">
-            <div className="hidden items-center md:flex">
-              {sections.map((s) => (
-                <Link
-                  key={s.id}
-                  href={`#${s.id}`}
-                  className="rounded-full px-4 py-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-primary/[0.06] hover:text-foreground"
-                >
-                  {s.label}
-                </Link>
-              ))}
-            </div>
+        {/* Desktop pill nav (logo inside) */}
+        <nav className="mx-auto hidden max-w-7xl items-center justify-center md:flex">
+          <div className="flex items-center gap-1 rounded-full border border-border/40 bg-background/70 px-3 py-2 shadow-lg shadow-black/[0.03] backdrop-blur-xl">
+            <Link href="/" className="mr-2 flex items-center gap-2.5 transition-opacity hover:opacity-80">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-xs font-bold text-primary-foreground">
+                K
+              </div>
+              <span className="text-[14px] font-semibold tracking-tight">
+                Kaabmedia
+              </span>
+            </Link>
+            <div className="mx-2 h-5 w-px bg-border/60" />
+            {sections.map((s) => (
+              <Link
+                key={s.id}
+                href={`#${s.id}`}
+                className="rounded-full px-4 py-2 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-primary/[0.06] hover:text-foreground"
+              >
+                {s.label}
+              </Link>
+            ))}
             <Button
               asChild
               size="sm"
-              className="h-8 rounded-full px-5 text-[13px] font-medium shadow-none md:ml-1"
+              className="ml-1 h-9 rounded-full px-6 text-[13px] font-medium shadow-none"
             >
               <Link href="#contact" className="inline-flex items-center gap-1.5">
                 Start je project
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </Button>
-          </nav>
+          </div>
+        </nav>
+
+        {/* Mobile menu panel */}
+        <div
+          className={`overflow-hidden border-b border-border/40 bg-background transition-all duration-300 md:hidden ${
+            mobileOpen
+              ? "max-h-[400px] opacity-100"
+              : "pointer-events-none max-h-0 border-transparent opacity-0"
+          }`}
+        >
+          <div className="space-y-1 px-4 pb-2 pt-1">
+            {sections.map((s) => (
+              <Link
+                key={s.id}
+                href={`#${s.id}`}
+                onClick={closeMobile}
+                className="flex items-center rounded-xl px-3 py-2.5 text-[15px] font-medium text-foreground transition-colors hover:bg-secondary"
+              >
+                {s.label}
+              </Link>
+            ))}
+          </div>
+          <div className="border-t border-border/40 px-4 py-3">
+            <Button asChild className="w-full rounded-xl text-[15px]">
+              <Link href="#contact" onClick={closeMobile} className="inline-flex items-center justify-center gap-2">
+                Start je project
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </header>
 
       {/* Spacer */}
-      <div className="h-[68px] md:h-[72px]" aria-hidden />
+      <div className="h-14 md:h-[72px]" aria-hidden />
 
       <div ref={wrapRef} className="relative min-h-screen overflow-x-hidden">
         {/* Background gradient mesh */}
@@ -336,61 +388,69 @@ export default function Home() {
 
       <main>
         {/* ─── Hero ─── */}
-        <section className="relative px-6 pb-16 pt-20 md:pb-24 md:pt-32">
-          <div className="mx-auto max-w-7xl">
-            <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
-              {/* Left: text content */}
-              <div className="space-y-8">
-                <div
-                  data-hero-badge
-                  className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-secondary/80 px-4 py-1.5 text-xs font-medium text-muted-foreground"
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Beschikbaar voor nieuwe projecten
-                </div>
-
-                <div data-hero-title>
-                  <h1 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl xl:text-7xl">
-                    <span className="block">Wij bouwen digitale</span>
-                    <span className="block bg-gradient-to-r from-[oklch(0.55_0.22_250)] via-[oklch(0.60_0.20_270)] to-[oklch(0.65_0.18_290)] bg-clip-text text-transparent">
-                      ervaringen die converteren.
-                    </span>
-                  </h1>
-                </div>
-
-                <p
-                  data-hero-subtitle
-                  className="max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg"
-                >
-                  Snelle, conversiegerichte websites (WordPress), webshops (WordPress + WooCommerce) en webapps. Duidelijke prijzen, strak design en gebouwd voor groei.
-                </p>
-
-                <div data-hero-cta className="flex flex-wrap items-center gap-4 pt-2">
-                  <Button asChild size="lg" className="rounded-full px-8 text-[15px]">
-                    <Link href="#contact">
-                      Plan een kennismaking
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" size="lg" className="rounded-full px-8 text-[15px]">
-                    <Link href="#services">Bekijk diensten</Link>
-                  </Button>
-                </div>
+        <section className="relative overflow-hidden px-6 pb-16 pt-20 md:pb-24 md:pt-32">
+          {/* Subtle dot grid + spotlight (light version) */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div
+              className="hero-dot-grid absolute -inset-1/2 h-[200%] w-[200%]"
+              style={{
+                backgroundImage: "radial-gradient(circle, oklch(0.25 0.04 260 / 0.12) 1px, transparent 1px)",
+                backgroundSize: "32px 32px",
+              }}
+            />
+            <div className="hero-spotlight absolute h-[300px] w-[300px] rounded-full bg-[oklch(0.60_0.20_250_/_0.08)] blur-[120px] md:h-[500px] md:w-[500px]" />
+          </div>
+          <div className="relative mx-auto max-w-4xl text-center">
+            <div className="flex flex-col items-center space-y-8">
+              <div
+                data-hero-badge
+                className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-secondary/80 px-4 py-1.5 text-xs font-medium text-muted-foreground"
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                Beschikbaar voor nieuwe projecten
               </div>
 
-              {/* Right: hero image */}
+              <div data-hero-title>
+                <h1 className="text-4xl font-bold leading-[1.1] tracking-tight md:text-5xl lg:text-6xl xl:text-7xl">
+                  <span className="block">Wij bouwen digitale</span>
+                  <span className="block bg-gradient-to-r from-[oklch(0.55_0.22_250)] via-[oklch(0.60_0.20_270)] to-[oklch(0.65_0.18_290)] bg-clip-text text-transparent">
+                    ervaringen die converteren.
+                  </span>
+                </h1>
+              </div>
+
+              <p
+                data-hero-subtitle
+                className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg"
+              >
+                Snelle, conversiegerichte websites (WordPress), webshops (WordPress + WooCommerce) en webapps. Duidelijke prijzen, strak design en gebouwd voor groei.
+              </p>
+
+              <div data-hero-cta className="flex flex-wrap items-center justify-center gap-4 pt-2">
+                <Button asChild size="lg" className="rounded-full px-8 text-[15px]">
+                  <Link href="#contact">
+                    Plan een kennismaking
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="rounded-full px-8 text-[15px]">
+                  <Link href="#services">Bekijk diensten</Link>
+                </Button>
+              </div>
+
+              {/* Hero image */}
               <div
                 data-hero-image
-                className="relative mx-auto w-full max-w-lg lg:mx-0 lg:max-w-none"
+                className="relative mx-auto w-full max-w-3xl pt-4"
               >
-                <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-2xl shadow-[oklch(0.60_0.20_250_/_0.10)]">
+                <div className="relative aspect-[16/9] overflow-hidden rounded-2xl shadow-2xl shadow-[oklch(0.60_0.20_250_/_0.10)]">
                   <Image
                     src="/hero.jpg"
                     alt="Kaabmedia – Digital Agency"
                     fill
                     priority
                     className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    sizes="(max-width: 768px) 100vw, 768px"
                   />
                 </div>
 
@@ -701,11 +761,24 @@ export default function Home() {
           <div className="mx-auto max-w-7xl">
             <div
               data-animate
+              data-cta-banner
               className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[oklch(0.22_0.04_260)] via-[oklch(0.25_0.045_260)] to-[oklch(0.20_0.05_270)] px-8 py-16 text-center md:px-16 md:py-20"
             >
-              <div className="pointer-events-none absolute inset-0">
-                <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full bg-[oklch(0.60_0.20_250_/_0.15)] blur-[80px]" />
-                <div className="absolute -bottom-20 -left-20 h-60 w-60 rounded-full bg-[oklch(0.55_0.15_280_/_0.1)] blur-[80px]" />
+              {/* Animated dot grid + moving spotlight */}
+              <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                {/* Dot grid — oversized so the slow drift animation stays seamless */}
+                <div
+                  className="cta-dot-grid absolute -inset-1/2 h-[200%] w-[200%]"
+                  style={{
+                    backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px)",
+                    backgroundSize: "32px 32px",
+                  }}
+                />
+                {/* Moving spotlight that sweeps across the grid */}
+                <div className="cta-spotlight absolute h-[300px] w-[300px] rounded-full bg-[oklch(0.60_0.20_250_/_0.30)] blur-[100px] md:h-[400px] md:w-[400px]" />
+                {/* Static orbs for depth */}
+                <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full bg-[oklch(0.60_0.20_250_/_0.20)] blur-[80px]" />
+                <div className="absolute -bottom-20 -left-20 h-60 w-60 rounded-full bg-[oklch(0.55_0.15_280_/_0.15)] blur-[80px]" />
               </div>
               <div className="relative z-10">
                 <h2 className="mx-auto max-w-2xl text-3xl font-bold tracking-tight text-white md:text-4xl">
@@ -982,13 +1055,6 @@ export default function Home() {
           {/* Bottom bar */}
           <div className="flex flex-col gap-4 border-t border-white/10 py-6 text-xs text-white/30 md:flex-row md:items-center md:justify-between">
             <p>&copy; {new Date().getFullYear()} Kaabmedia. Alle rechten voorbehouden.</p>
-            <div className="flex items-center gap-4">
-              <p>KvK 12345678</p>
-              <span className="h-1 w-1 rounded-full bg-white/20" />
-              <p>BTW NL123456789B01</p>
-              <span className="h-1 w-1 rounded-full bg-white/20" />
-              <p>Gebouwd met Next.js & Tailwind</p>
-            </div>
           </div>
         </div>
       </footer>
