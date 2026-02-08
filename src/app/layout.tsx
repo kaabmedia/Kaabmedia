@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
+const inter = Inter({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kaabmedia – Strakke websites die werken",
+  title: "Kaabmedia – Digital Agency | Websites, Webshops & Webapps",
   description:
-    "Kaabmedia ontwerpt en bouwt snelle, conversiegerichte websites voor merken en ondernemers die online willen groeien.",
+    "Wij bouwen snelle, conversiegerichte websites, webshops en webapps op maat. Strak design, Next.js technologie en heldere prijzen.",
 };
 
 export default function RootLayout({
@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="nl">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
+        className={`${inter.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
       >
         {children}
       </body>
