@@ -50,7 +50,7 @@ const offerings = [
   {
     id: "websites",
     title: "Websites",
-    price: "v.a. \u20AC350",
+    price: "v.a. \u20AC1.000",
     badge: null,
     description:
       "Strakke, snelle sites voor merken en ondernemers. Gebouwd met WordPress. Van \u00E9\u00E9n pagina tot meerdere secties, altijd conversiegericht.",
@@ -68,7 +68,7 @@ const offerings = [
   {
     id: "webshops",
     title: "Webshops",
-    price: "v.a. \u20AC1.000",
+    price: "v.a. \u20AC2.000",
     badge: "Populair",
     description:
       "Online verkoop op maat met WordPress en WooCommerce. Productcatalogus, betalingen, voorraad en een ervaring die bij jouw merk past.",
